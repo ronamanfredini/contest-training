@@ -2,65 +2,67 @@
 #include <map>
 #include <vector>
 
+#define VALOR_ESTACIONAMENTO 10
+
 using namespace std;
 
+struct carro {
+	int indiceInicial;
+	int comprimento;
+};
 
 int main() {
-	int comprimento, eventos, comprimentoTotalPreenchido, faturamento;
+	int comprimentoEstacionamento, eventos, faturamento;
 
-	while (cin >> comprimento >> eventos) {
-		map<int, int> estacionados;
-		map<int, int>::iterator it;
-		vector<int> estacionamento(comprimento);
+	while (cin >> comprimentoEstacionamento >> eventos) {
+		faturamento = 0;
+		map<int, carro> estacionados;
+		map<int, carro>::iterator it;
+		vector<int> estacionamento(comprimentoEstacionamento);
 		fill(estacionamento.begin(), estacionamento.end(), 0);
 
-		comprimentoTotalPreenchido = faturamento = 0;
 		for (int i = 0; i < eventos; i++) {
-			char tipoEvento;
-			int placa, comprimentoCarro;
-			cin >> tipoEvento >> placa;
-
-			if (tipoEvento == 'C') {
+			char eventoTipo;
+			int placa;
+			cin >> eventoTipo >> placa;
+			if (eventoTipo == 'C') {
+				int comprimentoCarro;
 				cin >> comprimentoCarro;
-				if (comprimentoCarro + comprimentoTotalPreenchido <= comprimento) {
-					int first0Pos = -1;
-					for (int i = 0; i < comprimento; i++) {
-						if (first0Pos == -1 && estacionamento[i] == 0) {
-							first0Pos = i;
-						}
-
- 						if ((estacionamento[i] != 0 || i + 1 == comprimento) && i - 1 - first0Pos > comprimentoCarro) {
-							cout << "0pos - " << first0Pos<<endl;
-							for (int j = first0Pos; j < i; j++) {
-								estacionamento[j] = placa;
-							}
-							break;
-						} else if (estacionamento[i] != 0) {
-							first0Pos == -1;
-						}
+				int first0Index = -1;
+				for (int j = 0; j < comprimentoEstacionamento; j++) {
+					if (estacionamento[j] == 0 && first0Index == -1) {
+						first0Index = j;
 					}
 
-					pair<int, int> par = pair<int,int>(placa, comprimentoCarro);
-					estacionados.insert(par);
-					comprimentoTotalPreenchido += comprimentoCarro;
+					//Encontrou uma posição não zero ou o final do vetor.
+					if ((estacionamento[j] != 0 && first0Index != -1) || j == comprimentoEstacionamento - 1) {
+						if (1 + j - first0Index >= comprimentoCarro) {
+							 for (int k = first0Index; k < first0Index + comprimentoCarro; k++) {
+								 estacionamento[k] = placa;
+								 
+							 }
+							 pair<int, carro> identificadorCarro = pair<int, carro>(placa, {first0Index, comprimentoCarro});
+							 estacionados.insert(identificadorCarro);
+						}
+					}
+					if (estacionamento[j] != 0) {
+						first0Index = -1;
+					}
 				}
-			} else if (tipoEvento == 'S') {
+			} else if (eventoTipo == 'S') {
 				it = estacionados.find(placa);
-				if (it!=estacionados.end()) {
-					faturamento += 10;
-					comprimentoTotalPreenchido -= it->second;
-					estacionados.erase(it);
+				for (int j = it->second.indiceInicial; j < it->second.indiceInicial + it->second.comprimento; j++) {
+					estacionamento[j] = 0;
 				}
-			}
-			for (int j = 0; j < comprimento; j++) {
-				cout<< j << " - " << estacionamento[j] << endl;
+				faturamento += VALOR_ESTACIONAMENTO;
+				estacionados.erase(it);
 			}
 		}
 
-		for (it = estacionados.begin(); it != estacionados.end(); ++it) {
-			faturamento += 10;
-		}
-
+		faturamento += VALOR_ESTACIONAMENTO * estacionados.size();
+		estacionados.clear();
+		estacionamento.clear();
 		cout << faturamento << endl;
 	}
+	return 0;
 }
