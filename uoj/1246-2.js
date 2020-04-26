@@ -41,9 +41,7 @@ function solution(lines) {
 		var vals = lines[i].split(' ');
 		var comprimento = parseInt(vals[0]);
 		var eventosCount = parseInt(vals[1]);
-		var estacionamento = new Array(comprimento);
-		var estacionados = new Map();
-		estacionamento.fill(0);
+		var estacionados = [];
 
 		var comprimentoTotalPreenchido, faturamento;
 		comprimentoTotalPreenchido = faturamento = 0;
@@ -57,42 +55,23 @@ function solution(lines) {
 				var carLength = parseInt(eventVals[2]);
 
 				if (carLength + comprimentoTotalPreenchido <= comprimento) {
-					var first0Pos, lastCarPositionedIndex;
-					first0Pos = lastCarPositionedIndex = -1;
-
-					for (var k = 0; k < comprimento; k++) {
-						if (first0Pos == -1 && estacionamento[k] == 0) {
-							first0Pos = k;
-						}
-
- 						if ((estacionamento[k] != 0 || k + 1 == comprimento) && k - first0Pos + 1 >= carLength && first0Pos != -1) {
-							for (var l = first0Pos; l < first0Pos + carLength; l++) {
-								estacionamento[l] = placa;
-							}
-							lastCarPositionedIndex = first0Pos + carLength - 1;
-
-							break;
-						}
-
-						if (estacionamento[k] != 0) {
-							first0Pos == -1;
-						}
-					}
-					if (lastCarPositionedIndex != -1) {
-						var car = {
-							firstIndex: first0Pos,
-							lastIndex: lastCarPositionedIndex
-						};
-						estacionados.set(placa, car);
-						comprimentoTotalPreenchido += carLength;
-					}
+                    
+                    if (estacionados.length == 0) {
+                        var car = {
+							firstIndex: 0,
+							lastIndex: carLength - 1;
+                        };
+                        estacionados.push(car);
+                    } else {
+                        for (var k = estacionados[0].lastIndex; k < estacionados.length; k++) {
+                            if (estacionados)
+                        }
+                    }
+                    
+                    
 				}
 			} else if (operationType == 'S') {
 				var car = estacionados.get(placa);
-
-				for (var k = car.firstIndex; k <= car.lastIndex; k++) {
-					estacionamento[k] = 0;
-				}
 				comprimentoTotalPreenchido -=  car.lastIndex - car.firstIndex + 1;
 				estacionados.delete(placa);
 				faturamento += parkingPrice;
