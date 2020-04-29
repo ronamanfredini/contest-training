@@ -16,10 +16,10 @@ function freqQuery($queries) {
 			if (!isset($frequencies[count($dict[$number])])) {
 				$frequencies[count($dict[$number])] = 1;
 			} else {
-				if (isset($frequencies[$lateFrequencyCount])) {
-					$frequencies[$lateFrequencyCount]--;
-				}
 				$frequencies[count($dict[$number])]++;
+			}
+			if (isset($frequencies[$lateFrequencyCount])) {
+				$frequencies[$lateFrequencyCount]--;
 			}
 		}
 		if ($operation == 2) {
@@ -39,23 +39,8 @@ function freqQuery($queries) {
 		}
 
 	}
-	// var_dump($frequencies);
-
-	// die();
 	return $out;
 }
-
-// $fileContent = file_get_contents("test_cases/frequency_queries/input.txt");
-// $fileContent = explode(PHP_EOL, $fileContent);
-// $results = [];
-
-// foreach($fileContent as $line) {
-	// if(strlen($line) > 0) {
-		// $tmp = explode(' ',$line);
-		// array_push($results, $tmp);
-	// }
-// }
-
 $results = [[1,3],[2,3], [3,2], [1,4], [1,5], [1,5], [1,4], [3,2], [2,4], [3,2]];
 $resultStr = implode(freqQuery($results), PHP_EOL);
 echo $resultStr;
