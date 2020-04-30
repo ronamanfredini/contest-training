@@ -9,5 +9,10 @@ for i in quantidade_retangulos:
         c = (j - 1 + pt / 100) * deltaX
         f = 3 - (1 / 3) * pow(c, 2)
         area += f * deltaX
-    print(area)
+    print("Área cálculada " + str(i) + " = " + str(area))
+    a = 6 + (9 / (2 * i))
+    a = a - (3 / (2 * pow(i,2)))
+    a =  a + (9 * pt / (10000))
+    a = a * ((1 / i) * -100 + (100/i) - (pt / i))
+    print("A" + str(i) + " = " + str(a))
     
