@@ -11,7 +11,7 @@ function binSearch($arr, $x, $start, $end){
    
 $arr = [1,3,4,5,6,7,8,9,10,11,12,13,14,16];
 function searchScore($scores, $alice) {
-    $scoresFlipped = array_flip($scores);
+    global $scoresFlipped;
     $alicePos = binSearch($scores, $alice, 0, count($scores) - 1);
     if ($alicePos[1]) {
         return $alicePos[0] + 1;
@@ -24,11 +24,14 @@ function searchScore($scores, $alice) {
         return $endingPivot + 1;
     }
 
-
-    var_dump($alicePos); die();
+    if (!isset($scores[$endingPivot - 1])) return 1;
+    if (!isset($scores[$endingPivot + 1])) return count
 }
 
+$scoresFlipped;
 function climbingLeaderboard($scores, $alice) {
+    global $scoresFlipped = array_flip($scores);
+
     foreach($alice as $score) {
         echo searchScore($scores, $score);
     }
