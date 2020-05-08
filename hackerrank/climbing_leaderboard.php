@@ -14,17 +14,23 @@ function searchScore($scores, $alice) {
     $scoresFlipped = array_flip($scores);
     $alicePos = binSearch($scores, $alice, 0, count($scores) - 1);
     if ($alicePos[1]) {
-        echo ($alicePos[0] + 1);
-        return;
+        return $alicePos[0] + 1;
     }
 
-    
+    $endingPivot = $alicePos[0];
+
+    if (isset($scores[$endingPivot - 1]) && $scores[$endingPivot - 1] > $alice &&
+    isset($scores[$endingPivot + 1]) && $scores[$endingPivot + 1] < $alice) {
+        return $endingPivot + 1;
+    }
+
+
     var_dump($alicePos); die();
 }
 
 function climbingLeaderboard($scores, $alice) {
     foreach($alice as $score) {
-        searchScore($scores, $score);
+        echo searchScore($scores, $score);
     }
 }
 
