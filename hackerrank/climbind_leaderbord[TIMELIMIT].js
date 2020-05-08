@@ -1,26 +1,17 @@
+let binSearch = (arr, x, start, end) => { 
+    let mid=Math.floor((start + end)/2); 
+    if (start > end) return [mid, false]; 
+    if (arr[mid]===x) return [mid, true]; 
+    if(arr[mid] > x)  
+        return binSearch(arr, x, start, mid-1); 
+    else
+        return binSearch(arr, x, mid+1, end); 
+} 
+   
+let arr = [1,3,4,5,6,7,9,8,10,11,12,13,14,16];
 
 function climbingLeaderboard(scores, alice) {
-    let positions = [];
 
-    for (let i = 0; i < alice.length; i++) {
-        let aliceScore = alice[i];
-        let rankCounter = 1;
-        for (let j = 0; j < scores.length; j++) {
-            let currentScore = scores[j];
-            if (currentScore < scores[j - 1])
-                rankCounter++;
-            if (aliceScore >= currentScore) {
-                positions.push(rankCounter);
-                break;
-            }
 
-            if (j == scores.length - 1) {
-                if (aliceScore < currentScore) {
-                    rankCounter++;
-                }
-                positions.push(rankCounter);
-            }
-        }
-    }
-    return positions;
+
 }
