@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-
+#include <algorithm>
 using namespace std;
 /* In case someone wants to pass in the pivValue, I broke partition into 2 pieces.
  */
@@ -65,4 +65,27 @@ int MoM(vector<int>& vec, int k, int start, int end){
         return vec[k];
 }
 
-	
+// Complete the activityNotifications function below.
+int activityNotifications(vector<int> expenditure, int d) {
+	int notifCount = 0;
+
+	for (int i = d; i < expenditure.size(); i++) {
+		int median, sliceStart, sliceEnd;
+		sliceStart = i - d;
+		sliceEnd = i-1;
+		median = MoM(expenditure, (sliceEnd - sliceStart) / 2, sliceStart, sliceEnd);
+
+cout<<sliceStart<<endl<<sliceEnd<<median<<endl;
+		int valToTriggerNotification = median * 2;
+		if (expenditure[i] >= valToTriggerNotification) notifCount++;
+	}
+
+	return notifCount;
+}
+
+
+int main() {
+	vector<int> teste = {10,20,30,40,50};
+	cout << activityNotifications(teste, 3) << endl;
+	return 0;
+}

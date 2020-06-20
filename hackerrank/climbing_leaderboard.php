@@ -1,40 +1,62 @@
 <?php
 
 function binSearch($arr, $x, $start, $end){ 
-    $mid=floor(($start + $end)/2); 
+	$mid = floor(($start + $end) / 2); 
 
-    if ($start < $end) return [$mid, false]; 
-    if ($arr[$mid]===$x) return [$mid, true]; 
-    if($arr[$mid] < $x) return binSearch($arr, $x, $start, $mid-1); 
-    else return binSearch($arr, $x, $mid+1, $end); 
+	if ($start > $end) return [$mid, false]; 
+	if ($arr[$mid] === $x) return [$mid, true]; 
+	if($arr[$mid] < $x) return binSearch($arr, $x, $start, $mid - 1); 
+	else return binSearch($arr, $x, $mid + 1, $end); 
 } 
-   
-$arr = [1,3,4,5,6,7,8,9,10,11,12,13,14,16];
+
+$scoresMapped = [];
+
 function searchScore($scores, $alice) {
-    global $scoresFlipped;
-    $alicePos = binSearch($scores, $alice, 0, count($scores) - 1);
-    if ($alicePos[1]) {
-        return $alicePos[0] + 1;
-    }
+	global $scoresMapped;
+	$alicePos = binSearch($scores, $alice, 0, count($scores) - 1);
+	$endingPivot = $alicePos[0];
 
-    $endingPivot = $alicePos[0];
+	if ($alicePos[1]) {
+		return $scoresMapped[$endingPivot];
+	}
 
-    if (isset($scores[$endingPivot - 1]) && $scores[$endingPivot - 1] > $alice &&
-    isset($scores[$endingPivot + 1]) && $scores[$endingPivot + 1] < $alice) {
-        return $endingPivot + 1;
-    }
+	if ($scores[$endingPivot] > $alice) {
+		for ($i = $endingPivot; $i < count($scores) - 1; $i++) {
+			if ($alice < $scores[$i] && $alice > $scores[$i + 1]) {
+				return $scoresMapped[$i] + 1;
+			}
+		}
+		return $scoresMapped[count($scoresMapped) - 1] + 1;
+	}
 
-    if (!isset($scores[$endingPivot - 1])) return 1;
-    if (!isset($scores[$endingPivot + 1])) return count
+	for ($i = $endingPivot; $i > 0; $i--) {
+		if ($alice > $scores[$i] && $alice < $scores[$i - 1]) {
+			return $scoresMapped[$i];
+		}
+	}
+	return 1;
 }
 
-$scoresFlipped;
+
 function climbingLeaderboard($scores, $alice) {
-    global $scoresFlipped = array_flip($scores);
+	global $scoresMapped;
 
-    foreach($alice as $score) {
-        echo searchScore($scores, $score);
-    }
+	$scoreCounter = 1;
+	$lastScore = $scores[0];
+	$scoresMapped[0] = 1;
+	for ($i = 1; $i < count($scores); $i++) {
+		if ($scores[$i] < $lastScore) {
+			$lastScore = $scores[$i];
+			$scoreCounter++;
+		}
+		$scoresMapped[$i] = $scoreCounter;
+	}
+
+	$results = [];
+	foreach($alice as $score) {
+		array_push($results, searchScore($scores, $score));
+	}
+	return $results;
 }
 
-climbingLeaderboard([100,100,50,40,40,20,10], [25]);
+var_dump(climbingLeaderboard([100,100,50,40,40,20,10], [5]));
