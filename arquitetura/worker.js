@@ -19,7 +19,7 @@ function handleTransferMessage(data) {
     data.actualSender = workerId;
     if (data.target == workerId) {
         data.type = MessageTypes.SUCCESS;
-        data.message = `Mensagem chegou ao destino`;
+        data.message = `Mensagem ${data.message} chegou ao destino`;
     }
     messagePort.postMessage(data);
 }
