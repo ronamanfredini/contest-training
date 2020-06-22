@@ -8,7 +8,7 @@ const workerCount = parseInt(args[0]);
 const initialSender = parseInt(args[1])
 
 var initialMessage = new BaseMessage();
-initialMessage.type = MessageTypes.TRANSFER;
+initialMessage.type = MessageTypes.START;
 initialMessage.message = args[3];
 initialMessage.originalSender = initialSender;
 initialMessage.actualSender = initialSender;
@@ -23,8 +23,10 @@ function getDirection(actual, target) {
     if (leftPath > workerCount) {
         leftPath = workerCount - (leftPath % workerCount);
     }
-    console.log(leftPath, rightPath);
-    return rightPath <= leftPath? 1: -1;
+    if (rightPath <= leftPath) {
+        return actual < target? 1: -1;
+    }
+    return actual <= workerCount / 2? -1: 1;
 }
 
 function resolveSender(actual, target) {
@@ -42,7 +44,6 @@ function handleMessage(messageObj) {
     if (messageObj.type == MessageTypes.SUCCESS) console.log(messageObj.message);
     if (messageObj.type == MessageTypes.TRANSFER) handleTransferMessage(messageObj);
 }
-
 
 for (let i = 1; i <= workerCount; i++) {
     workers[i] = new Worker("./worker.js", {argv: [i]});

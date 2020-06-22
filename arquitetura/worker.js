@@ -10,7 +10,12 @@ function setupWorker(data) {
 }
 
 function handleTransferMessage(data) {
-    console.log(`Worker ${workerId} recebeu com sucesso a mensagem ${data.message}, vinda do Worker ${data.actualSender} com destino ao Worker ${data.target}`);
+    let sender = "Worker " + data.actualSender;
+    if (data.type == MessageTypes.START) {
+        sender = "cluster";
+        data.type = MessageTypes.TRANSFER;
+    }
+    console.log(`Worker ${workerId} recebeu com sucesso a mensagem ${data.message}, vinda do ${sender} com destino ao Worker ${data.target}`);
     data.actualSender = workerId;
     if (data.target == workerId) {
         data.type = MessageTypes.SUCCESS;
@@ -21,7 +26,7 @@ function handleTransferMessage(data) {
 
 function handleMessage(messageObj) {
     if (messageObj.type == MessageTypes.SETUP && messagePort === undefined) setupWorker(messageObj);
-    else if (messageObj.type == MessageTypes.TRANSFER){ handleTransferMessage(messageObj); };
+    else if (messageObj.type == MessageTypes.TRANSFER || messageObj.type == MessageTypes.START){ handleTransferMessage(messageObj); };
 }
 
 parentPort.on("message", handleMessage);
