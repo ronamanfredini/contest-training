@@ -26,7 +26,7 @@ function handleTransferMessage(data) {
 
 function handleMessage(messageObj) {
     if (messageObj.type == MessageTypes.SETUP && messagePort === undefined) setupWorker(messageObj);
-    else if (messageObj.type == MessageTypes.TRANSFER || messageObj.type == MessageTypes.START){ handleTransferMessage(messageObj); };
+    else if (messageObj.type == MessageTypes.TRANSFER || messageObj.type == MessageTypes.START) handleTransferMessage(messageObj);
 }
 
 parentPort.on("message", handleMessage);
