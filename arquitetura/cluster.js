@@ -5,7 +5,8 @@ const { BaseMessage, MessageTypes } = require("./messageInterface.js");
 const fs = require("fs");
 const path = require("path");
 const filePath = path.join(__dirname, "comm.txt");
-const workerCount = 10;
+const args = process.argv.slice(2);
+const workerCount = parseInt(args[0]);
 
 var workers = [];
 var messageChannels = [];
@@ -24,7 +25,7 @@ function getDirection(actual, target) {
 
 function resolveSender(actual, target) {
     let nextSender = actual + getDirection(actual, target);
-    if (nextSender == -1) return workerCount;
+    if (nextSender == -1) return workerCount - 1;
     if (nextSender == workerCount) return 0;
     return nextSender;
 }
