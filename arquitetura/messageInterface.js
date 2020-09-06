@@ -1,4 +1,4 @@
-types = { SETUP: 0, TRANSFER: 1, SUCCESS: 2, ERROR: 3 };
+var types = { SETUP: 0, TRANSFER: 1, SUCCESS: 2, START: 3 };
 
 class BaseMessage {
     type;
@@ -7,7 +7,6 @@ class BaseMessage {
     actualSender;
     target;
 }
-
 
 exports.BaseMessage = BaseMessage;
 exports.MessageTypes = types;
