@@ -1,10 +1,29 @@
 const { networkInterfaces } = require('os');
 const express = require('express');
+const http = require('https');
 const app = express();
 const port = 3001;
-const http = require('https');
 const nets = networkInterfaces();
 const ips = [];
+const masterAddress = 'http://localhost:3000';
+const axios = require('axios');
+app.use(function(req, res, next) {
+
+	//to allow cross domain requests to send cookie information.
+	res.header('Access-Control-Allow-Credentials', true);
+
+	// origin can not be '*' when crendentials are enabled. so need to set it to the request origin
+	res.header('Access-Control-Allow-Origin',  req.headers.origin);
+
+	// list of methods that are supported by the server
+	res.header('Access-Control-Allow-Methods','OPTIONS,GET,PUT,POST,DELETE');
+
+	res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, X-XSRF-TOKEN');
+
+	next();
+});
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 
 for (const name of Object.keys(nets)) {
 	for (const net of nets[name]) {
@@ -14,10 +33,6 @@ for (const name of Object.keys(nets)) {
 	}
 }
 
-app.get('/', (req, res) => {
-	res.send('Hello World!');
-});
-
 app.listen(port, () => {
 	console.log(`Example app listening at http://localhost:${port}`);
 });
@@ -25,10 +40,17 @@ app.listen(port, () => {
 app.get('/status', (req, res) => {
 	res.send({
 		status: true,
-		ip:ips[0]
+		ip: ips[0],
+		load: 0
 	});
-
 });
 
-
-
+axios.post(masterAddress + '/assign-node', {
+	ip: ips[0]
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
