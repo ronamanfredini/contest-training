@@ -5,7 +5,9 @@ const app = express();
 const port = 3001;
 const nets = networkInterfaces();
 const ips = [];
-const masterAddress = 'http://localhost:3000';
+//const masterAddress = 'http://172.18.0.22:3000';
+const masterAddress = 'http://127.0.0.1:3000';
+
 const axios = require('axios');
 app.use(function(req, res, next) {
 
@@ -44,6 +46,23 @@ app.get('/status', (req, res) => {
 		load: 0
 	});
 });
+
+function fib(n) {
+	if (n < 2)
+		return n;
+	return fib(n - 1) + fib(n - 2);
+}
+
+app.post('/assign-fib-sequence', (req, res) => {
+	const { body: { number }} = req;
+	console.log('chegou o numero' + number);
+	if (number) {
+		return fib(number);
+	}
+
+	return 'Not valid';
+});
+
 
 axios.post(masterAddress + '/assign-node', {
 	ip: ips[0]

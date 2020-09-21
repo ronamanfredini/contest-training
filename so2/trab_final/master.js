@@ -4,19 +4,11 @@ const port = 3000;
 const bodyParser = require('body-parser');
 const readline = require('readline');
 const axios = require('axios');
-
 app.use(bodyParser.json());
 app.use(function(req, res, next) {
-
-	//to allow cross domain requests to send cookie information.
 	res.header('Access-Control-Allow-Credentials', true);
-
-	// origin can not be '*' when crendentials are enabled. so need to set it to the request origin
 	res.header('Access-Control-Allow-Origin',  req.headers.origin);
-
-	// list of methods that are supported by the server
 	res.header('Access-Control-Allow-Methods','OPTIONS,GET,PUT,POST,DELETE');
-
 	res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, X-XSRF-TOKEN');
 
 	next();
@@ -29,7 +21,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(port, () => {
-	console.log(`Example app listening at http://localhost:${port}`);
+	console.log(`App is running on http://localhost:${port}, my king.`);
 });
 
 app.post('/assign-node', (req, res) => {
@@ -52,7 +44,6 @@ app.post('/assign-node', (req, res) => {
 			status: false,
 			message: 'failed to assign address'
 		});
-
 	}
 });
 
@@ -60,7 +51,7 @@ function checkNodesStatus() {
 	for (const [key, value] of Object.entries(nodesAvailable)) {
 
 		axios.get('http://' + key + ':3001/status').then(function (response) {
-			console.log(response.data);
+			//console.log(response.data);
 		}).catch(function (error) {
 			delete nodesAvailable[key];
 			console.warn('Alert: node' + key + ' dropped');
@@ -68,20 +59,43 @@ function checkNodesStatus() {
 	}
 }
 
+const rl = readline.createInterface({
+	input: process.stdin,
+	output: process.stdout
+});
+
+function sendWorkToNode(num) {
+	console.log(nodesAvailable);
+	axios.post('http://192.168.1.4' + '/assign-fib-sequence', {
+		number: num
+	})
+		.then(function (response) {
+			console.log(response);
+		})
+		.catch(function (error) {
+			console.log(error);
+		});
+}
+
+function promptMenu() {
+	rl.question("Choose operation: \n1 - Set Fibonacci sequence to calculate\n2 - Get cluster status\n", (option) => {
+		console.log(option);
+		if (option == '1') {
+			rl.question("Set sequence number: \n", (number) => sendWorkToNode(number));
+		} else if (option == '2') {
+			rl.question("Set sequence number: \n", (numbers) => {
+
+			});
+
+		}
+		promptMenu();
+	});
+}
+
 function main() {
 	setInterval(checkNodesStatus.bind(this), 3000);
+	promptMenu();
 }
 
 main();
-
-
-
-
-
-
-
-
-
-
-
 
