@@ -3,7 +3,7 @@ while True:
     
     c = 2 * int(a) - int(b)
 
-    if a == 0 and b == 0:
+    if a == '0' and b == '0':
         break
     
     print(c)
