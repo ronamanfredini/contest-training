@@ -3,30 +3,18 @@ const who = 'CLIENT'
 const net = require('net')
 const dataHandler = require('./handlers/data')
 const readline = require("readline");
+const connection = require('./handlers/connection')
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 })
 
-rl.question("De qual base você quer fazer backup?", (answer) => {
-  const client = net.createConnection({ port: 8090 }, () => {
-    console.log(`[${who}] --> Sucessfully connected to Manager`);
-
-    const data = {
-      message: answer,
-      origin: who
-    }
-
-    client.write(dataHandler.encodeData(data))
+rl.question("De qual base você quer fazer backup?", async (answer) => {
+  const response = await connection.doRequest(8070, {
+    message: answer,
+    origin: who
   })
 
-  client.on('data', (data) => {
-    console.log(data.toString());
-    client.end();
-  })
-
-  client.on('end', () => {
-    console.log('disconnected from server');
-  })
+  console.log(response)
 })
 

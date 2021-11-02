@@ -12,14 +12,15 @@ const server = net.createServer(connection => {
     console.log(`error ${who}`)
   })
   connection.on('end', data => {
-  
     console.log(`end ${who}`)
   })
 
   connection.on('data', data => {
     const parsedData = dataHandler.formatData(data)
     console.log(`[${who}] --> Received data from ${parsedData.origin}`)
-    
+
+    connection.write('resposta')
+    connection.pipe(connection)
   })
 })
 
@@ -35,6 +36,6 @@ server.on('error', (e) => {
 
 server.listen({
   host: 'localhost',
-  port: 8090,
+  port: 8070,
   exclusive: true
 })
