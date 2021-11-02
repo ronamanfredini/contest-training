@@ -1,7 +1,5 @@
 //CLIENT
 const who = 'CLIENT'
-const net = require('net')
-const dataHandler = require('./handlers/data')
 const readline = require("readline");
 const connection = require('./handlers/connection')
 const rl = readline.createInterface({
