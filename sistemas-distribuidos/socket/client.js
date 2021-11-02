@@ -10,7 +10,8 @@ const rl = readline.createInterface({
 rl.question("De qual base você quer fazer backup?", async (answer) => {
   const response = await connection.doRequest(8070, {
     message: answer,
-    origin: who
+    origin: who,
+    type: 'data'
   })
 
   console.log(response)

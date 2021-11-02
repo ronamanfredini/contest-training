@@ -1,9 +1,9 @@
 //SERVER
 
-console.log(process.argv)
 const who = 'SERVER'
 const net = require('net')
 const dataHandler = require('./handlers/data')
+const connectionHandler = require('./handlers/connection')
 
 const server = net.createServer(connection => {
   connection.on('connect', data => {
@@ -14,11 +14,20 @@ const server = net.createServer(connection => {
     console.log(`error ${who}`)
   })
   connection.on('end', data => {
-    console.log(`end ${who}`)
   })
 
-  connection.on('data', data => {
+  connection.on('data', async data => {
     const formattedData = dataHandler.formatData(data)
+    console.log(`[${who}] --> Calling BASE ${data.base}`)
+    const response = await connectionHandler.doRequest(formattedData.port, {})
+
+    console.log(response)
+    const formattedResponse = {
+      baseData: response,
+      origin: who
+    }
+
+    connection.write(dataHandler.encodeData(formattedResponse))
     connection.pipe(connection)
   })
 })

@@ -1,13 +1,14 @@
 //SERVER
 
-console.log(process.argv)
+const port = process.argv[2]
+const baseNum = process.argv[3]
+const connectionHandler = require('./handlers/connection')
 const who = 'SERVER'
 const net = require('net')
-const dataHandler = require('./handlers/data')
 const fs = require('fs');
 
-const getParsedData = (baseCode, connection) => {
-    const rawdata = fs.readFileSync(`base/base${baseCode}.json`);
+const getParsedData = () => {
+    const rawdata = fs.readFileSync(`base/base${baseNum}.json`);
     return JSON.parse(rawdata);
 }
 
@@ -20,21 +21,19 @@ const server = net.createServer(connection => {
     console.log(`error ${who}`)
   })
   connection.on('end', data => {
-    console.log(`end ${who}`)
   })
 
-  connection.on('data', data => {
-    const formattedData = dataHandler.formatData(data);
-    if (formattedData.type == 'status')
-        connection.write('to vivo')
-    else {
-        const parsedData = getParsedData(formattedData.message);
-        connection.write(JSON.stringify(parsedData));
-    }
+  connection.on('data', () => {
+    const parsedData = getParsedData();
+    connection.write(JSON.stringify(parsedData));
     connection.pipe(connection);
   })
 })
 
+
+setInterval(() => {
+  connectionHandler.doRequest(8070, { type: 'status', port, baseNum, origin: 'BASE' })
+}, 1000)
 
 server.on('error', (e) => {
   if (e.code === 'EADDRINUSE') {
@@ -48,6 +47,6 @@ server.on('error', (e) => {
 
 server.listen({
   host: 'localhost',
-  port: 8100,
+  port,
   exclusive: true
 })
