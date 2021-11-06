@@ -3,7 +3,34 @@
 const who = 'SERVER'
 const net = require('net')
 const dataHandler = require('./handlers/data')
-const connectionHandler = require('./handlers/connection')
+const { Worker, MessageChannel, MessagePort, isMainThread, parentPort } = require('worker_threads');
+let servicesId = 0
+
+let services = []
+let awaiters = {}
+
+function serviceMessageHandler(value) {
+  awaiters[value.serverId](value)
+}
+function createServicePort() {
+  const serverChannel = new MessageChannel();
+  serverChannel.port2.on('message', serviceMessageHandler)
+
+  return serverChannel.port1
+}
+
+function sendMessage(message, id) {
+  return new Promise((resolve, reject) => {
+    awaiters[id] = resolve
+    services[id].postMessage({ message, type: 'message' })
+  })
+}
+
+function createService(id) {
+  services[id] = new Worker('./serverThread.js')
+  const port = createServicePort(id)
+  services[id].postMessage({ messagePort: port, id, serviceMessage: 'Serviço ' + id, id }, [port]);
+}
 
 const server = net.createServer(connection => {
   connection.on('connect', data => {
@@ -17,17 +44,13 @@ const server = net.createServer(connection => {
   })
 
   connection.on('data', async data => {
-    const formattedData = dataHandler.formatData(data)
-    console.log(`[${who}] --> Calling BASE ${data.base}`)
-    const response = await connectionHandler.doRequest(formattedData.port, {})
+    const thisThreadId = ++servicesId
+    createService(thisThreadId)
+    const formattedData = await sendMessage({type: 'data', data}, thisThreadId)
+    formattedData.origin = who
+    console.log(`Received data from THREAD #${thisThreadId}`)
 
-    console.log(response)
-    const formattedResponse = {
-      baseData: response,
-      origin: who
-    }
-
-    connection.write(dataHandler.encodeData(formattedResponse))
+    connection.write(dataHandler.encodeData(formattedData))
     connection.pipe(connection)
   })
 })
@@ -38,7 +61,7 @@ server.on('error', (e) => {
     console.log('Address in use, retrying...');
     setTimeout(() => {
       server.close();
-      server.listen(PORT, HOST);
+      server.listen(8090, HOST);
     }, 1000);
   }
 });
