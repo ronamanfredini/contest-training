@@ -48,6 +48,7 @@ const server = net.createServer(connection => {
     createService(thisThreadId)
     const formattedData = await sendMessage({type: 'data', data}, thisThreadId)
     formattedData.origin = who
+    formattedData.status = true
     console.log(`Received data from THREAD #${thisThreadId}`)
 
     connection.write(dataHandler.encodeData(formattedData))

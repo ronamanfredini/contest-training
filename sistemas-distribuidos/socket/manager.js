@@ -13,10 +13,12 @@ const callServer = base => {
 
 const getData = async (base) => {
   if (validateAliveBase(base)) {
-    return await callServer(base)
+    const response = await callServer(base)
+    console.log(`[${who}] --> Received data from SERVER`)
+    return response
   }
 
-  return `Base ${base} is not alive. Aborting...`
+  return {baseData: `Base ${base} is not alive. Aborting...`, status: false}
 }
 
 const dataFlow = async data => {
@@ -27,7 +29,6 @@ const dataFlow = async data => {
   } else if (data.type === 'data') {
     console.log(`[${who}] --> Calling SERVER for data from Base ${data.message}`)
     const response = await getData(data.message)
-    console.log(`[${who}] --> Received data from ${response.origin} ${response.message}`)
     return dataHandler.formatData(dataHandler.encodeData(response))
   }
 }
@@ -45,9 +46,8 @@ const server = net.createServer(connection => {
 
   connection.on('data', async data => {
     const dataAsJson = dataHandler.formatData(data)
-    console.log(`[${who}] --> Received data from ${dataAsJson.origin}`)
     const response = await dataFlow(dataAsJson)
-    connection.write(response)
+    connection.write(dataHandler.encodeData(response))
     connection.pipe(connection)
   })
 })

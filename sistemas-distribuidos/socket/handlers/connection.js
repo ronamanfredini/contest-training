@@ -11,6 +11,5 @@ module.exports.doRequest = (port, data) => new Promise((resolve, reject) => {
     client.end()
   })
 
-  client.on('end', () => {
-  })
+  client.on('end', () => {})
 })

@@ -11,16 +11,21 @@ const rl = readline.createInterface({
 
 
 async function ask() {
-  rl.question("De qual base você quer fazer backup?", async (answer) => {
+  rl.question("De qual base você quer fazer backup?\n", async (answer) => {
     try {
       const response = await connection.doRequest(8070, {
         message: answer,
         origin: who,
         type: 'data'
       })
-      const formatted = JSON.parse(response)
-      fs.writeFileSync(`./backups/base${answer}.json`, formatted.baseData)
-      console.log(`[CLIENT] --> Base ${answer} successfully backuped`)
+      const formatted = dataHandler.formatData(dataHandler.formatData(response))
+      if (formatted.status) {
+        fs.writeFileSync(`./backups/base${answer}.json`, formatted.baseData)
+        console.log(`[CLIENT] --> Base ${answer} successfully backuped`)
+      } else {
+        console.log(`[CLIENT] --> ${formatted.baseData}`)
+      }
+
     } catch(err) {
       console.log('CLIENT ERROR -> ', err)
     }
