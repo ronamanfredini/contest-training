@@ -67,3 +67,12 @@ server.listen({
   port: 8070,
   exclusive: true
 })
+
+setInterval(() => {
+  for (const [key, value] of Object.entries(aliveInstances)) {
+    if (value.lastSeen < new Date().getTime() - 2000) {
+      console.log(`Stopped receiving status from Base ${key}. Removing from available servers.`)
+      delete aliveInstances[key]
+    }
+  }
+}, 1000)
