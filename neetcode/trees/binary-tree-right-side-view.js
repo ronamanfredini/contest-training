@@ -26,34 +26,32 @@ class Solution {
    * @return {number[][]}
    */
   rightSideView(root) {
-    if (!root) {
-      return [];
-    }
+    const queue = [];
+    const levels = [];
 
-    function aux(root, level = 0, sublists = []) {
-      if (!root) {
-        return;
+    if (root) {
+      queue.push(root);
+    }
+    
+    while (queue.length > 0) {
+      const qLen = queue.length;
+      const level = [];
+      
+      for (let i = 0; i < qLen; i++) {
+        const node = queue.shift();
+        if (node) {
+          level.push(node.val);
+          queue.push(node.left);
+          queue.push(node.right);
+        }
       }
 
-      if (!sublists[level]) {
-        sublists[level] = [];
+      if (level.length > 0) {
+        levels.push(level);
       }
-
-      sublists[level].push(root.val);
-      aux(root.left, level + 1, sublists);
-      aux(root.right, level + 1, sublists);
-
-
-      return sublists;
     }
 
-    const levels = aux(root);
-    const result = [];
-    for (const level of levels) {
-      result.push(level.pop())
-    }
-
-    return result
+    return levels
   }
 }
 
