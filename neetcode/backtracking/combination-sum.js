@@ -11,33 +11,29 @@ class Solution {
    * @returns {number[][]}
    */
   combinationSum(nums, target) {
-      const combinations = new Map();
+      const combinations = [];
       const triedCombinations = new Map();
-      const aux = (combination) => {
-          combination = combination.sort();
-          const key = combination.join();
-          if (triedCombinations.has(key)) {
-              return
-          }
-          triedCombinations.set(key, combination);
+      const dfs = (i = 0, combination = [], total = 0) => {
+        if (total === target) {
+            combinations.push([...combination]);
+            return
+        }
+        if (total > target || i >= nums.length) {
+            return;
+        }
 
-          const sum = combination.reduce((curr, acc) => curr + acc, 0);
-          if (sum > target) {
-              return;
-          }
-
-          if (sum === target) {
-              combinations.set(key, combination);
-              return
-          }
-
-          for (const num of nums) {
-              aux([...combination, num]);
-          }
+        combination.push(nums[i]);
+        dfs(i, combination, total + nums[i]);
+        combination.pop();
+        dfs(i + 1, combination, total);
       }
 
-      aux([])
+      dfs()
 
       return Array.from(combinations.values());
   }
 }
+
+const s = new Solution();
+const nums = [2,5,6,9], target = 9
+console.log(s.combinationSum(nums, target))
