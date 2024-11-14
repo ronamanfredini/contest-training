@@ -7,20 +7,28 @@ class Solution {
    */
   permute(nums) {
     const result = [];
-    const dfs = (i = 0, combination = new Set()) => {
-      if (combination.size === nums.length) {
+    const dfs = (i = 0, combination = []) => {
+      if (combination.length === nums.length) {
         result.push([...combination]);
         return;
       }
 
-      if (combination.size > nums.length || i >= nums.length) {
+      if (combination.length > nums.length || i >= nums.length) {
         return;
       }
 
-      combination.add(nums[i]);
-      dfs(i, combination);
-      combination.delete(nums[i])
-      dfs(i + 1, combination);
+      for (let j = 0; j < nums.length; j++) {
+        const num = nums[j]
+        if (j !== i) {
+          combination.push(num);
+          dfs(i + 1, combination)
+          combination.pop()
+        }
+      }
+      // combination.push(nums[i]);
+      // dfs(i, combination);
+      // combination.pop()
+      // dfs(i + 1, combination);
     };
 
     dfs();
