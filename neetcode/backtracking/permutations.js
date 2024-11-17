@@ -7,34 +7,26 @@ class Solution {
    */
   permute(nums) {
     const result = [];
-    const dfs = (i = 0, combination = []) => {
-      if (combination.length === nums.length) {
-        result.push([...combination]);
+    const dfs = (availableChoices = [], permutation = []) => {
+      if (permutation.length === nums.length) {
+        result.push([...permutation]);
         return;
       }
 
-      if (combination.length > nums.length || i >= nums.length) {
-        return;
-      }
+      for (let i = 0; i < availableChoices.length; i++) {
+        const num = availableChoices[i];
+        const newPermutation = [...permutation];
+        newPermutation.push(num);
+        const newAvailableChoices = [...availableChoices];
+        newAvailableChoices.splice(i, 1);
 
-      for (let j = 0; j < nums.length; j++) {
-        const num = nums[j]
-        if (j !== i) {
-          combination.push(num);
-          dfs(i + 1, combination)
-          combination.pop()
-        }
+        dfs(newAvailableChoices, newPermutation)
       }
-      // combination.push(nums[i]);
-      // dfs(i, combination);
-      // combination.pop()
-      // dfs(i + 1, combination);
     };
 
-    dfs();
+    dfs([...nums]);
     return result;
   }
-
 }
 
 
