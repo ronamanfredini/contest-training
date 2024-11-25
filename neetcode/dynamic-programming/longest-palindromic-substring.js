@@ -1,30 +1,54 @@
 // URL - https://neetcode.io/problems/longest-palindromic-substring
 
 class Solution {
+
+  /**
+   * @param {string} s
+   * @return {boolean}
+   */
+  isPalindrome(s) {
+    let left = 0;
+    let right = s.length - 1;
+
+    while (left <= right) {
+      if (s[left] !== s[right]) {
+        return false;
+      }
+      left++;
+      right--;
+    }
+
+    return true;
+  }
+
   /**
    * @param {string} s
    * @return {string}
    */
   longestPalindrome(s) {
-    let maxPalindrome = s[0];
-    const dfs = (currentPalindrome = '', i = 0) => {
-      if (currentPalindrome.length > maxPalindrome.length) {
-        const reversed = [...currentPalindrome].reverse().join('');
-        if (currentPalindrome === reversed) {
-          maxPalindrome = reversed;
-        }
-      }
+    let maxPalindrome = '';
 
-      if (i >= s.length) {
+    /**
+     * @param {string} s
+     * @return {string}
+    */
+    const findLongest = (str) => {
+      if (maxPalindrome.length >= str.length) {
         return;
       }
 
-      currentPalindrome += s[i];
-      dfs(currentPalindrome, i + 1);
-      currentPalindrome = currentPalindrome.slice(currentPalindrome.length - 1);
-      dfs(currentPalindrome, i + 1);
+      if (this.isPalindrome(str)) {
+        maxPalindrome = str;
+        return;
+      }
+
+      findLongest(str.substring(0, str.length - 1));
+    };
+
+    for (let i = 0; i < s.length; i++) {
+      findLongest(s.substring(i));
     }
-    dfs();
+
     return maxPalindrome
   }
 }
