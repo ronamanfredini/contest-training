@@ -1,54 +1,50 @@
 // URL - https://neetcode.io/problems/coin-change
 
 class Solution {
+  memo = new Map();
   /**
    * @param {number[]} coins
    * @param {number} amount
    * @return {number}
    */
-  dfs(coins, amount, coinCountSoFar = 0) {
+  dfs(coins, amount) {
     if (amount === 0) {
-      return coinCountSoFar;
+      return 0;
     }
 
-    if (coins.length === 0) {
-      return -1;
+    if (this.memo.has(amount)) {
+      return this.memo.get(amount);
     }
 
-    const coin = coins.pop();
-    if (coin > amount) {
-      return this.dfs(coins, amount, coinCountSoFar);;
+    let result = Number.MAX_SAFE_INTEGER;
+    for (const coin of coins) {
+      if (amount - coin >= 0) {
+        result = Math.min(result, this.dfs(coins, amount - coin) + 1)
+      }
     }
 
-    const reminder = amount % coin;
-    coinCountSoFar += Math.floor(amount / coin);
-
-    return this.dfs(coins, reminder, coinCountSoFar);
+    this.memo.set(amount, result);
+    return result;
   }
+
   /**
    * @param {number[]} coins
    * @param {number} amount
    * @return {number}
    */
   coinChange(coins, amount) {
-    if (amount === 0) {
-      return 0;
+    const result = this.dfs(coins, amount)
+
+    if (result === Number.MAX_SAFE_INTEGER) {
+      return -1;
     }
 
-    coins = coins.sort((a, b) => a - b);
-    while (coins.length > 0) {
-      const result = this.dfs(coins, amount);
-      if (result > 0) {
-        return result;
-      }
-      coins.pop();
-    }
-
-    return -1;
+    return result;
   }
 }
 
 
 const s = new Solution();
-const coins=[11, 22, 33, 44, 55, 66, 77, 88, 99, 111], amount=330
+const coins=[5,10, 1], amount=12
+// const coins=[357,239,73,52], amount=9832
 console.log(s.coinChange(coins, amount))
