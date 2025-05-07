@@ -1,7 +1,10 @@
 def solution(mat):
     result = [[-1 for col in range(len(mat) + 1)] for row in range(len(mat))]
     
-    def dfs(i, j, visited=set()):
+    def dfs(i, j, visited=None):
+        if visited is None:
+            visited = set()
+
         if i < 0 or i >= len(mat) or j < 0 or j >= len(mat) or (i, j) in visited:
             return 1e9
         
@@ -13,8 +16,6 @@ def solution(mat):
             result[i][j] = 0
             return 0
             
-        result[i][j] = 1e9
-        
         res = min(
             dfs(i+1, j),
             dfs(i-1, j),
