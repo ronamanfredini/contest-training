@@ -9,22 +9,13 @@ class ListNode:
 class Solution:
     def reverseKGroup(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
         def reverse_list(head):
-            stack = []
-            if not head:
-                return None
-
+            prev = None
             while head:
-                stack.append(head)
-                head = head.next
-            
-            init = stack.pop()
-            begin = init
-            while stack:
-                init.next = stack.pop()
-                init = init.next
-            
-            init.next =  None
-            return begin
+                nxt = head.next
+                head.next = prev
+                prev = head
+                head = nxt
+            return prev
         
 
 
@@ -36,11 +27,13 @@ class Solution:
             if counter == k:
                 temp = head.next
                 head.next = None
-                group_init.next = reverse_list(group_init.next)
-                head.next = temp
+                group_tail = group_init.next
+                group_init.next = reverse_list(group_tail)
+                group_tail.next = temp
 
                 counter = 0
                 group_init = head
+                head = group_tail
             counter += 1
             head = head.next
 
