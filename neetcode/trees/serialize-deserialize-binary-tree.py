@@ -20,7 +20,7 @@ class Codec:
         while len(q) > 0:
             r = q.popleft()
             if r:
-                q.append(r.left)
+                q.append(r.left)    
                 q.append(r.right)
                 res.append(str(r.val))
             else:
