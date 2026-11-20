@@ -38,7 +38,6 @@ class Solution:
 
             b1 = False
             if root.get('*', False):
-                # Only word-start calls (root=None) repeat; their answer depends on i alone.
                 if i + 1 in self.memo:
                     return self.memo[i + 1]
 
